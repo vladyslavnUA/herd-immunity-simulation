@@ -113,8 +113,9 @@ class Simulation(object):
         while should_continue:
         # TODO: for every iteration of this loop, call self.time_step() to compute another
         # round of this simulation.
+            self.time_step()
+            log_time_step()
         print('The simulation has ended after {time_step_counter} turns.'.format(time_step_counter))
-        pass
 
     def time_step(self):
         ''' This method should contain all the logic for computing one time step
@@ -129,7 +130,18 @@ class Simulation(object):
                 increment interaction counter by 1.
             '''
         # TODO: Finish this method.
-        pass
+        find_person = True
+        interaction_counter = 0
+        for person in self.population:
+            if person.infection != None:
+                for i in range(100):
+                    while find_person == True:
+                        random_person = random.choice(self.population)
+                        if((random_person != person) and (random_person.is_alive == True)):
+                            find_person = False
+                    find_person = True
+                    simulation.interaction(person, random_person)
+                    interaction_counter += 1
 
     def interaction(self, person, random_person):
         '''This method should be called any time two living people are selected for an
