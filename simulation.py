@@ -36,7 +36,7 @@ class Simulation(object):
         # TODO: Store each newly infected person's ID in newly_infected attribute.
         # At the end of each time step, call self._infect_newly_infected()
         # and then reset .newly_infected back to an empty list.
-        self.logger = None
+        self.logger = Logger()
         self.population = [] # List of Person objects
         self.pop_size = pop_size # Int
         self.next_person_id = 0 # Int
@@ -68,7 +68,20 @@ class Simulation(object):
 
         # Use the attributes created in the init method to create a population that has
         # the correct intial vaccination percentage and initial infected.
-        pass
+        num_of_vaccinated = self.pop_size*self.vacc_percentage
+        infected_count = 0
+        for i in range(self.pop_size):
+            if(i < num_of_vaccinated):
+                #they are vaccinated
+                self.population.append(Person(i, True))
+            else:
+                #they are not vaccinated
+                if(infected_count < initial_infected):
+                    self.population.append(Person(i, False, virus))
+                    infected_count += 1
+                else:
+                    self.population.append(Person(i, False))
+        return self.population
 
     def _simulation_should_continue(self):
         ''' The simulation should only end if the entire population is dead
