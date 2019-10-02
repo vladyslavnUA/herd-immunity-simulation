@@ -142,6 +142,7 @@ class Simulation(object):
                     find_person = True
                     simulation.interaction(person, random_person)
                     interaction_counter += 1
+            _infect_newly_infected()
 
     def interaction(self, person, random_person):
         '''This method should be called any time two living people are selected for an
@@ -168,7 +169,11 @@ class Simulation(object):
             #     Simulation object's newly_infected array, so that their .infected
             #     attribute can be changed to True at the end of the time step.
         # TODO: Call slogger method during this method.
-        pass
+        if random_person.is_vaccinated == False and (random_person.infection == None):
+            if(random.uniform(0, 1) < virus.repro_rate):
+                newly_infected.append(random_person)
+
+
 
     def _infect_newly_infected(self):
         ''' This method should iterate through the list of ._id stored in self.newly_infected
