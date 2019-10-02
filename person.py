@@ -53,8 +53,8 @@ def test_not_vacc_person_instantiation():
     # assert ...
     assert person._id == 2
     assert person.is_alive is True
-    # assert person.is_vaccinated is True
-    # assert person.infection is None
+    assert person.is_vaccinated is False
+    assert person.infection is None
 
 
 
