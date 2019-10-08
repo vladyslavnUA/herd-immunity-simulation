@@ -23,6 +23,16 @@ class Logger(object):
         # the 'a' mode to append a new log to the end, since 'w' overwrites the file.
         # NOTE: Make sure to end every line with a '/n' character to ensure that each
         # event logged ends up on a separate line!
+
+        with open(self.file_name, 'w') as log_textfile:
+            log_content = [pop_size, vacc_percentage,
+                           virus_name, mortality_rate, basic_repro_num]
+
+            for i in log_content:
+                # TODO: Test if this works
+                log_content.append(i, ends=' \n')
+                log_textfile.writelines(log_content)
+
         pass
 
     def log_interaction(self, person, random_person, random_person_sick=None,
@@ -52,7 +62,15 @@ class Logger(object):
         # TODO: Finish this method. If the person survives, did_die_from_infection
         # should be False.  Otherwise, did_die_from_infection should be True.
         # Append the results of the infection to the logfile
-        pass
+
+        with open(self.file.name, 'a') as log_textfile:
+            #! Is did_die_from_infection supposed to be did_survive_infection?
+            #TODO: Fix later after confirmed.
+            if person.did_die_from_infection() == False:
+                log_textfile.write(f'{person.ID} survived this infection.\n')
+            else:
+                log_textfile.write(f'{person.ID} died from this infeciton.\n Try again next time')
+                
 
     def log_time_step(self, time_step_number):
         ''' STRETCH CHALLENGE DETAILS:
