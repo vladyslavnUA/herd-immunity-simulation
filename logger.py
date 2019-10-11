@@ -11,34 +11,16 @@ class Logger(object):
         # full file name of the file that the logs will be written to.
         self.file_name = file_name
 
-        new_file = open(self.file_name, mode='w+')
-        print(new_file.read())
-        new_file.close()
-
+        log_textfile = open(self.file_name, mode='w+')
+        print(log_textfile.read())
+        log_textfile.close()
 
     def write_metadata(self, pop_size, vacc_percentage, virus_name, mortality_rate,
-                       basic_repro_num):
-        '''
-        The simulation class should use this method immediately to log the specific
-        parameters of the simulation as the first line of the file.
-        '''
-        # TODO: Finish this method. This line of metadata should be tab-delimited
-        # it should create the text file that we will store all logs in.
-        # TIP: Use 'w' mode when you open the file. For all other methods, use
-        # the 'a' mode to append a new log to the end, since 'w' overwrites the file.
-        # NOTE: Make sure to end every line with a '/n' character to ensure that each
-        # event logged ends up on a separate line!
-
-        with open(self.file_name, 'w') as log_textfile:
-            log_content = [pop_size, vacc_percentage,
-                           virus_name, mortality_rate, basic_repro_num]
-
-            for i in log_content:
-                # TODO: Test if this works
-                log_content.append(i, ends=' \n')
-                log_textfile.writelines(log_content)
-
-        pass
+                       basic_repro_rate):
+        with open(self.file_name, mode='w') as log_textfile:
+            metadata = f'Population Size: {pop_size}\nVaccination Percentage: {vacc_percentage}\nVirus Name: {virus_name}\nMortality Rate: {mortality_rate}\nBasic Reproduction Number: {basic_repro_rate}\n'
+            log_textfile.write(metadata)
+        log_textfile.close()
 
     def log_interaction(self, person, random_person, random_person_sick=None,
                         random_person_vacc=None, did_infect=None):
@@ -55,20 +37,17 @@ class Logger(object):
         # represent all the possible edge cases. Use the values passed along with each person,
         # along with whether they are sick or vaccinated when they interact to determine
         # exactly what happened in the interaction and create a String, and write to your logfile.
-        with open(self.file_name, mode='a') as log_textfile:
-            log_textfile.write('Interaction Logs: \n')
-            if did_infect:
-                infection_status = str(person._id) + \
-                    ' infects ' + str(random_person._id) + '\n'
-            elif random_person.is_vaccinated:
-                infection_status = str(
-                    person._id) + ' did not infect ' + str(random_person._id) + '\n'
+        with open(self.file_name, 'a') as log_textfile:
+            if random_person_sick:
+                log_textfile.write(f"{person.ID} doesn't infect {random_person.ID} because already sick\n")
+            elif random_person_vacc:
+                log_textfile.write(f"{person.ID} doesn't infect {random_person.ID} because vaccinated\n")
+            elif did_infect:
+                log_textfile.write(f"{person.ID} infects {random_person.ID} \n")
             else:
-                infection_status = str(person._id) + ' did not infect ' + str(
-                    random_person._id) + ' because ' + str(random_person._id) + ' is vaccinated or already sick.' + '\n'
-                # print('Infection Status --> ', infection_status)
-            log_textfile.write(infection_status)
-            log_textfile.close()
+                log_textfile.write(f"FATAL: random_person_vacc: {random_person_vacc}; random_person_sick: {random_person_sick}; did_infect: {did_infect}\n")
+        log_textfile.close()
+
 
 
     def log_infection_survival(self, person, did_die_from_infection):
@@ -82,16 +61,16 @@ class Logger(object):
         # should be False.  Otherwise, did_die_from_infection should be True.
         # Append the results of the infection to the logfile
 
-        with open(self.file.name, 'a') as log_textfile:
-            #! Is did_die_from_infection supposed to be did_survive_infection?
-            #TODO: Fix later after confirmed.
-            if person.did_die_from_infection() == False:
-                log_textfile.write(f'{person.ID} survived this infection.\n')
+        with open(self.file_name, 'a') as log_textfile:
+            if did_die_from_infection:
+                log_textfile.write(f"Person {person._id} died from infection\n")
             else:
-                log_textfile.write(f'{person.ID} died from this infeciton.\n Try again next time')
-                
+                log_textfile.write(f"Person {person._id} survived infection.\n")
+        log_textfile.close()
 
-    def log_time_step(self, time_step_number):
+    def log_time_step(self, virus_name, time_step_counter, current_infected, additional_deaths, additional_vacc,
+                                      total_infected, total_dead,
+                                      total_vaccinated):
         ''' STRETCH CHALLENGE DETAILS:
 
         If you choose to extend this method, the format of the summary statistics logged
