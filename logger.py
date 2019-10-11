@@ -11,6 +11,11 @@ class Logger(object):
         # full file name of the file that the logs will be written to.
         self.file_name = file_name
 
+        new_file = open(self.file_name, mode='w+')
+        print(new_file.read())
+        new_file.close()
+
+
     def write_metadata(self, pop_size, vacc_percentage, virus_name, mortality_rate,
                        basic_repro_num):
         '''
@@ -50,7 +55,21 @@ class Logger(object):
         # represent all the possible edge cases. Use the values passed along with each person,
         # along with whether they are sick or vaccinated when they interact to determine
         # exactly what happened in the interaction and create a String, and write to your logfile.
-        pass
+        with open(self.file_name, mode='a') as log_textfile:
+            log_textfile.write('Interaction Logs: \n')
+            if did_infect:
+                infection_status = str(person._id) + \
+                    ' infects ' + str(random_person._id) + '\n'
+            elif random_person.is_vaccinated:
+                infection_status = str(
+                    person._id) + ' did not infect ' + str(random_person._id) + '\n'
+            else:
+                infection_status = str(person._id) + ' did not infect ' + str(
+                    random_person._id) + ' because ' + str(random_person._id) + ' is vaccinated or already sick.' + '\n'
+                # print('Infection Status --> ', infection_status)
+            log_textfile.write(infection_status)
+            log_textfile.close()
+
 
     def log_infection_survival(self, person, did_die_from_infection):
         ''' The Simulation object uses this method to log the results of every
